@@ -210,7 +210,7 @@ endif()
 
 target_compile_options(performous PRIVATE -Wall -Wextra)
 
-target_link_libraries(performous PRIVATE ced aubio nlohmann_json::nlohmann_json)
+target_link_libraries(performous PRIVATE ced aubio nlohmann_json::nlohmann_json restinio::restinio)
 
 if(APPLE)
 	list(APPEND LIBS "-framework Accelerate")
@@ -218,8 +218,8 @@ endif()
 list(APPEND LIBS ${FFTW3_LIBRARIES})
 list(APPEND LIBS ${BLAS_LIBRARIES})
 
-target_link_libraries(performous PkgConfig::deps)
-target_link_libraries(performous ${LIBS})
+target_link_libraries(performous PRIVATE PkgConfig::deps)
+target_link_libraries(performous PRIVATE ${LIBS})
 
 target_include_directories(performous PRIVATE "${AUBIO_INSTALL_DIR}/include/")
 
