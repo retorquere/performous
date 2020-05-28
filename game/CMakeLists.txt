@@ -101,8 +101,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Libraries
-
-find_package(Boost 1.55 REQUIRED COMPONENTS program_options filesystem iostreams system locale)
+find_package(Boost ${NEEDED_BOOST_VERSION} REQUIRED COMPONENTS program_options filesystem iostreams system locale)
 include_directories(${Boost_INCLUDE_DIRS})
 list(APPEND LIBS ${Boost_LIBRARIES})
 
@@ -158,27 +157,6 @@ if(ENABLE_WEBCAM)
 	endif()
 else()
 	message(STATUS "Webcam support: Disabled (explicitly disabled)")
-endif()
-
-option(ENABLE_WEBSERVER "Enable webserver support (cpprestsdk)." ON)
-if(ENABLE_WEBSERVER)
-	foreach(lib CppRest)
-		find_package(${lib})
-	endforeach(lib)
-	if(CppRest_FOUND)
-		find_package(Boost 1.36 REQUIRED COMPONENTS chrono thread)
-		include_directories(${Boost_INCLUDE_DIRS})
-		list(APPEND LIBS ${Boost_LIBRARIES})
-
-		include_directories(${CppRest_INCLUDE_DIRS})
-		list(APPEND LIBS ${CppRest_LIBRARIES})
-		message(STATUS "Webserver support: Enabled")
-		add_definitions("-DUSE_WEBSERVER")
-	else()
-		message(STATUS "Webserver support: Disabled (cpprestsdk not found)")
-	endif()
-else()
-	message(STATUS "Webserver support: Disabled (explicitly disabled)")
 endif()
 
 if(UNIX AND NOT APPLE)
