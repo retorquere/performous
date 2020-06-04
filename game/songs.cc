@@ -99,7 +99,7 @@ void Songs::LoadCache() {
 	}
 
     for(auto const& song : jsonRoot) {
-    	struct stat buffer;
+    	STAT buffer;
     	auto songPath = song["TxtFile"].get<std::string>();
     	auto isSongPathInConfiguredPaths = std::find_if(
                                                         userSongs.begin(), 
