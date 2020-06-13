@@ -183,7 +183,7 @@ else()
 endif()
 
 if(WIN32)
-  target_link_libraries(performous wsock32 ws2_32)
+  target_link_libraries(performous PRIVATE wsock32 ws2_32)
 endif()
 
 target_compile_options(performous PRIVATE -Wall -Wextra)
