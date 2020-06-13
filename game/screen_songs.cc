@@ -13,7 +13,6 @@
 #include "util.hh"
 #include "playlist.hh"
 
-#include "aubio.h"
 #include <iostream>
 #include <mutex>
 #include <sstream>
