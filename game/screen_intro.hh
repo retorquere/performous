@@ -26,7 +26,7 @@ class ScreenIntro : public Screen {
 	void draw_menu_options();
 	void draw_webserverNotice();
 	void populateMenu();
-	SvgTxtTheme& getTextObject(std::string const& txt);
+	std::shared_ptr<SvgTxtTheme> getTextObject(std::string const& txt);
 
 	Audio& m_audio;
 	std::unique_ptr<ThemeIntro> theme;
@@ -36,6 +36,11 @@ class ScreenIntro : public Screen {
 	AnimValue m_selAnim;
 	AnimValue m_submenuAnim;
 	AnimValue m_webserverNoticeTimeout;
+	float m_lineSpacing = -1.0f;
+	float m_lineHeight = -1.0f;
+	unsigned m_linesOnScreen = 0;
+	unsigned m_animationTargetLines = 0;
+	unsigned m_maxLinesOnScreen = 0;
 	int webserversetting = 0;
 	const unsigned short showOpts = 5; // Show at most 5 options simultaneously
 };
