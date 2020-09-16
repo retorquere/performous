@@ -4,6 +4,9 @@
 
 using namespace std::literals::chrono_literals;
 using Clock = std::chrono::steady_clock;
+//#ifdef Time
+//#undef Time
+//#endif
 using Time = Clock::time_point;
 using Seconds = std::chrono::duration<double>;
 

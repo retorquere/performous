@@ -6,6 +6,10 @@
 #include <map>
 #include <SDL2/SDL_events.h>
 
+#ifdef Screen
+#undef Screen
+#endif
+
 float screenW();
 float screenH();
 const float targetWidth = 1366.0f; // One of the most common desktop resolutions in use today.

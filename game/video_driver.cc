@@ -10,6 +10,13 @@
 #include "screen.hh"
 #include "util.hh"
 #include <boost/filesystem.hpp>
+#if (defined(GL_ES_VERSION_3_1) || defined(GL_ES_VERSION_3_2))
+#define PERFORMOUS_HAVE_EGL
+#ifdef Time
+#undef Time
+#include <epoxy/egl.h>
+#endif
+#endif
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_hints.h>
 #include <SDL2/SDL_rect.h>
@@ -62,7 +69,26 @@ Window::Window() : screen(nullptr, &SDL_DestroyWindow), glContext(nullptr, &SDL_
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK))
 		throw std::runtime_error(std::string("SDL_Init failed: ") + SDL_GetError());
 	SDL_JoystickEventState(SDL_ENABLE);
+	int glESRenderer;
+	bool haveEGL;
+	#ifdef PERFORMOUS_HAVE_EGL
+	haveEGL = true;	
+	#endif
+	std::string eglAPI(haveEGL ? "true" : "false");
 	{ // Setup GL attributes for context creation
+		std::clog << "video/info: do we have egl?: " << eglAPI << std::endl; 
+		for(int it = 0; it < SDL_GetNumRenderDrivers(); it++) {
+	      SDL_RendererInfo info;
+	      SDL_GetRenderDriverInfo(it,&info);
+
+	      SDL_Log("%s\n", info.name);
+	      if(strcmp("opengles2", info.name) == 0) {
+	      		glESRenderer = it;
+			std::clog << "video/info: glESRenderer: " << std::to_string(glESRenderer) << std::endl;
+			std::string isGLES(epoxy_is_desktop_gl() ? "true" : "false");
+			std::clog << "video/info: Are we using desktop GL?: " << isGLES << std::endl;
+	      	 }
+  		}
 		SDL_SetHintWithPriority("SDL_HINT_VIDEO_HIGHDPI_DISABLED", "0", SDL_HINT_DEFAULT);
 		GLattrSetter attr_r(SDL_GL_RED_SIZE, 8);
 		GLattrSetter attr_g(SDL_GL_GREEN_SIZE, 8);
@@ -72,8 +98,8 @@ Window::Window() : screen(nullptr, &SDL_DestroyWindow), glContext(nullptr, &SDL_
 		GLattrSetter attr_d(SDL_GL_DEPTH_SIZE, 24);
 		GLattrSetter attr_db(SDL_GL_DOUBLEBUFFER, 1);
 		GLattrSetter attr_glmaj(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		GLattrSetter attr_glmin(SDL_GL_CONTEXT_MINOR_VERSION, (epoxy_is_desktop_gl() == true ? 3 : 1));
-		GLattrSetter attr_glprof(SDL_GL_CONTEXT_PROFILE_MASK, (epoxy_is_desktop_gl() == true ? SDL_GL_CONTEXT_PROFILE_CORE : SDL_GL_CONTEXT_PROFILE_ES));
+		GLattrSetter attr_glmin(SDL_GL_CONTEXT_MINOR_VERSION, (haveEGL == false ? 3 : 1));
+		GLattrSetter attr_glprof(SDL_GL_CONTEXT_PROFILE_MASK, (haveEGL == false ? SDL_GL_CONTEXT_PROFILE_CORE : SDL_GL_CONTEXT_PROFILE_ES));
 		int checkProfileError = SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &glProfile); 
 		auto flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL;
 		if (config["graphic/highdpi"].b()) { flags |= SDL_WINDOW_ALLOW_HIGHDPI; }
@@ -135,6 +161,11 @@ Window::Window() : screen(nullptr, &SDL_DestroyWindow), glContext(nullptr, &SDL_
 		std::clog << "video/info: Create window dimensions: " << width << "x" << height << " on screen position: " << winOrigin.x << "x" << winOrigin.y << std::endl;
 		screen.reset(SDL_CreateWindow(PACKAGE " " VERSION, winOrigin.x, winOrigin.y, width, height, flags));
 		if (!screen) throw std::runtime_error(std::string("SDL_CreateWindow failed: ") + SDL_GetError());
+		SDL_Renderer* _renderer;
+		_renderer = SDL_CreateRenderer(screen.get(), glESRenderer, SDL_RENDERER_ACCELERATED);
+		if (glProfile == SDL_GL_CONTEXT_PROFILE_ES) {
+		std::clog << "video/info: Will try to create a GLES context." << std::endl;
+		}
 		glContext.reset(SDL_GL_CreateContext(screen.get()));
 		if (glContext == nullptr) throw std::runtime_error(std::string("SDL_GL_CreateContext failed with error: ") + SDL_GetError());
 		if (glProfile == SDL_GL_CONTEXT_PROFILE_ES) {

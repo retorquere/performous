@@ -2,7 +2,22 @@ cmake_minimum_required(VERSION 2.6)
 
 file(GLOB SOURCE_FILES "*.cc")
 file(GLOB HEADER_FILES "*.hh" "libda/*.hpp")
-set(OpenGL_GL_PREFERENCE GLVND)
+#set(OpenGL_GL_PREFERENCE "GLVND" CACHE STRING "OpenGL linking backend" FORCE)
+#find_package(OpenGL COMPONENTS OpenGL EGL REQUIRED)
+include(FindGLES3)
+gles3_detection("")
+#if (OpenGL_OpenGL_FOUND)
+#message(STATUS "OpenGL Found.")
+#	if (OpenGL_GLX_FOUND)
+#		message(STATUS "GLX Found.")
+#		message(STATUS "GLX Include dirs: ${OPENGL_GLX_INCLUDE_DIRS}")
+#	endif()
+#	if (OpenGL_EGL_FOUND)
+#		message(STATUS "EGL Found.")
+#		message(STATUS "EGL Include dirs: ${OPENGL_EGL_INCLUDE_DIRS}")
+#	endif()
+#endif()
+# find_package(OpenGL COMPONENTS GLX EGL)
 
 if(WIN32)
 	# We want to support all these version numbers:
@@ -174,7 +189,6 @@ if(WIN32)
   target_link_libraries(performous wsock32 ws2_32)
 endif()
 
-target_link_libraries(performous OpenGL::OpenGL OpenGL::EGL)
 target_link_libraries(performous ced aubio)
 
 if(APPLE)
@@ -182,9 +196,11 @@ if(APPLE)
 endif()
 list(APPEND LIBS ${FFTW3_LIBRARIES})
 list(APPEND LIBS ${BLAS_LIBRARIES})
+list(APPEND LIBS ${OPENGLES3_LIBRARIES})
 
 target_link_libraries(performous PkgConfig::deps)
 target_link_libraries(performous ${LIBS})
+#target_link_libraries(performous GLES3)
 
 target_include_directories(performous PRIVATE "${AUBIO_INSTALL_DIR}/include/")
 
