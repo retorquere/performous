@@ -33,6 +33,7 @@ jobs:
     - name: copy build settings and patches
       run: |
         cp win32/mxe/settings.mk win32/performous-mxe/mxe/settings.mk
+        sed -i 's/portaudiodev/portaudio/g' win32/performous-mxe/mxe/settings.mk
         echo >> win32/performous-mxe/mxe/settings.mk
         echo "MXE_PLUGIN_DIRS :=  plugins/performous" >> win32/performous-mxe/mxe/settings.mk
         mkdir -p win32/performous-mxe/mxe/plugins/performous
