@@ -37,6 +37,8 @@ jobs:
         # https://github.com/mxe/mxe/pull/1895
         sed -i 's/8b8e442becbeff637f160c1ef4a3a56769c50ba7c9ff939ccc94086530ff00e4/f6600abeee3babfa18591961a0ff21e7db6a6d9ef82418a261ec4fee44ee6d44/g' win32/performous-mxe/mxe/src/protobuf.mk
         sed -i 's/3.3.2/3.4.0/g' win32/performous-mxe/mxe/src/protobuf.mk
+        # https://github.com/mxe/mxe/issues/2176
+        curl -L -o win32/performous-mxe/mxe/src/bzip2.mk https://raw.githubusercontent.com/mxe/mxe/master/src/bzip2.mk
 
     - name: Install build dependencies
       run: sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python ruby sed unzip wget xz-utils scons
