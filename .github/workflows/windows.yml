@@ -18,13 +18,13 @@ jobs:
     - uses: actions/checkout@v2
       with:
         repository: mxe/mxe
-        path: ${{ runner.workspace }}
+        path: ${{ runner.workspace }}/performous
       
     - name: Install build dependencies
       run: sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python ruby sed unzip wget xz-utils
 
     - name: Configure mxe
-      run: cp ${{runner.workspace}}/performous/win32/mxe/settings.mk ${{runner.workspace}}/mxe
+      run: cp ${{runner.workspace}}/performous/win32/mxe/settings.mk ${{runner.workspace}}/performous/mxe
 
     - name: Cache mxe
       uses: actions/cache@v2
@@ -32,8 +32,8 @@ jobs:
         cache-name: cache-dependencies
       with:
         path: |
-          ${{ runner.workspace }}/mxe
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('mxe/settings.mk') }}
+          ${{ runner.workspace }}/performous/mxe
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('performous/mxe/settings.mk') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
           ${{ runner.os }}-build-
@@ -41,7 +41,7 @@ jobs:
 
     - name: Build mxe
       shell: bash
-      working-directory: ${{runner.workspace}}/mxe
+      working-directory: ${{runner.workspace}}/performous/mxe
       run: make -j4
 
     - name: Create build environment
@@ -53,7 +53,7 @@ jobs:
       shell: bash
       run: cmake .. -DPKG_CONFIG_EXECUTABLE=$MXE_PREFIX/usr/bin/$MXE_TARGET-pkg-config -DCMAKE_TOOLCHAIN_FILE=$MXE_PREFIX/usr/$MXE_TARGET/share/cmake/mxe-conf.cmake -DBoost_THREAD_LIBRARY_RELEASE=$MXE_PREFIX/usr/$MXE_TARGET/bin/libboost_thread_win32-mt.dll -DENABLE_WEBCAM=OFF -DENABLE_WEBSERVER=OFF
       env:
-        MXE_PREFIX: ${{runner.workspace}}/mxe
+        MXE_PREFIX: ${{runner.workspace}}/performous/mxe
         MXE_TARGET: i686-w64-mingw32.shared
 
     - name: Build performous
