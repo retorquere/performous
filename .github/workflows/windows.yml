@@ -26,6 +26,19 @@ jobs:
     - name: Configure mxe
       run: cp ${{runner.workspace}}/performous/win32/mxe/settings.mk ${{runner.workspace}}/performous/mxe
 
+    - name: Cache mxe
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-dependencies
+      with:
+        path: |
+          ${{ runner.workspace }}/performous/mxe
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('mxe/settings.mk') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
     - name: Build mxe
       shell: bash
       working-directory: ${{runner.workspace}}/performous/mxe
