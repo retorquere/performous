@@ -40,9 +40,10 @@ jobs:
         cp win32/performous-mxe/performous-1-fixes.patch win32/performous-mxe/mxe/plugins/performous
 
         # patch in snapshot checksum JIT
-        curl -LO http://www.portaudio.com/archives/pa_snapshot.tgz
+        curl -L http://www.portaudio.com/archives/pa_snapshot.tgz -o win32/performous-mxe/mxe/pkg/pa_snapshot.tgz
+        tar tvf win32/performous-mxe/mxe/pkg/pa_snapshot.tgz
         NEW_CHECKSUM_PREFIX='$(PKG)_CHECKSUM := '
-        NEW_CHECKSUM=`openssl dgst -sha256 pa_snapshot.tgz | awk '{print $2}'`
+        NEW_CHECKSUM=`openssl dgst -sha256 win32/performous-mxe/mxe/pkg/pa_snapshot.tgz | awk '{print $2}'`
         sed -i "s/.*_CHECKSUM.*/$NEW_CHECKSUM_PREFIX$CHECKSUM/" win32/performous-mxe/mxe/src/portaudiodev.mk
 
     - name: Install build dependencies
