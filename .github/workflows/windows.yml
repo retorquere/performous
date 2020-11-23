@@ -41,6 +41,12 @@ jobs:
         cp win32/performous-mxe/performous.mk win32/performous-mxe/mxe/plugins/performous
         cp win32/performous-mxe/performous-1-fixes.patch win32/performous-mxe/mxe/plugins/performous
 
+        # patch in snapshot checksum JIT
+        curl -LO http://www.portaudio.com/archives/pa_snapshot.tgz
+        NEW_CHECKSUM_PREFIX='$(PKG)_CHECKSUM := '
+        NEW_CHECKSUM=`openssl dgst -sha256 pa_snapshot.tgz | awk '{print $2}'`
+        sed -i "s/.*_CHECKSUM.*/$NEW_CHECKSUM_PREFIX$CHECKSUM/" win32/performous-mxe/mxe/src/portaudiodev.mk
+
     - name: Install build dependencies
       run: sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python ruby sed unzip wget xz-utils scons
 
