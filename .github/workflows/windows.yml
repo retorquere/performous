@@ -9,8 +9,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      PERFORMOUS_SOURCE: ${{runner.workspace}}/performous
 
     steps:
     - name: Clone fork of Lord-Kamina's performous repo
@@ -67,6 +65,9 @@ jobs:
       shell: bash
       working-directory: win32/performous-mxe/mxe
       run: make -j4 performous
+      with:
+        env:
+          PERFORMOUS_SOURCE: ${{runner.workspace}}/performous
 
     - name: Show build results
       working-directory: ${{runner.workspace}}/performous
