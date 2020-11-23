@@ -20,15 +20,8 @@ jobs:
     - name: Install build dependencies
       run: sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python ruby sed unzip wget xz-utils
 
-    - name: Configure CMake
-      uses: "finnp/create-file-action@master"
-      env:
-        FILE_DATA: |
-          JOBS := 4
-          MXE_TARGETS := i686-w64-mingw32.shared
-          LOCAL_PKG_LIST := gettext sdl2 boost portaudio ffmpeg portmidi pango gdk-pixbuf librsvg libsigc++ libxml++ libepoxy
-          .DEFAULT local-pkg-list:
-          local-pkg-list: $(LOCAL_PKG_LIST)
+    - name: Configure mxe
+      run: cp ${{runner.workspace}}/win32/mxe/settings.mk ${{runner.workspace}}/mxe
 
     - name: Build mxe
       shell: bash
