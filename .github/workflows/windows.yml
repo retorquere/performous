@@ -46,10 +46,11 @@ jobs:
 
     - name: Create build environment
       shell: bash
+      working-directory: ${{runner.workspace}}/performous
       run: mkdir build
 
     - name: Prepare build environment
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{runner.workspace}}/performous/build
       shell: bash
       run: cmake .. -DPKG_CONFIG_EXECUTABLE=$MXE_PREFIX/usr/bin/$MXE_TARGET-pkg-config -DCMAKE_TOOLCHAIN_FILE=$MXE_PREFIX/usr/$MXE_TARGET/share/cmake/mxe-conf.cmake -DBoost_THREAD_LIBRARY_RELEASE=$MXE_PREFIX/usr/$MXE_TARGET/bin/libboost_thread_win32-mt.dll -DENABLE_WEBCAM=OFF -DENABLE_WEBSERVER=OFF
       env:
@@ -57,11 +58,11 @@ jobs:
         MXE_TARGET: i686-w64-mingw32.shared
 
     - name: Build performous
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{runner.workspace}}/performous/build
       shell: bash
       run: make -j4
 
     - name: Show build results
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{runner.workspace}}/performous/build
       shell: bash
       run: "find . -type f -name '*.exe'"
