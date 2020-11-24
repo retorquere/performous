@@ -53,9 +53,9 @@ jobs:
         with open(mk) as f:
           body = []
           for line in f.readlines():
-          if '_CHECKSUM' in line:
-            line = re.sub(':= [0-9a-zA-Z]+', ':= ' + os.environ['NEW_CHECKSUM'], line)
-          body.append(line)
+            if '_CHECKSUM' in line:
+              line = re.sub(':= [0-9a-zA-Z]+', ':= ' + os.environ['NEW_CHECKSUM'], line)
+            body.append(line)
 
         with open(mk, 'w') as f:
           for line in body:
