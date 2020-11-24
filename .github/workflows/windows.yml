@@ -31,6 +31,7 @@ jobs:
         ref: performous
 
     - name: copy build settings and patches
+      shell: bash
       run: |
         cp win32/mxe/settings.mk win32/performous-mxe/mxe/settings.mk
         echo >> win32/performous-mxe/mxe/settings.mk
@@ -40,11 +41,26 @@ jobs:
         cp win32/performous-mxe/performous-1-fixes.patch win32/performous-mxe/mxe/plugins/performous
 
         # patch in snapshot checksum JIT
-        mkdir -p win32/performous-mxe/mxe/pkg
         curl -LO http://www.portaudio.com/archives/pa_snapshot.tgz
-        NEW_CHECKSUM_PREFIX='$(PKG)_CHECKSUM := '
-        NEW_CHECKSUM=`openssl dgst -sha256 pa_snapshot.tgz | awk '{print $2}'`
-        sed -i "s/.*_CHECKSUM.*/$NEW_CHECKSUM_PREFIX$CHECKSUM/" win32/performous-mxe/mxe/src/portaudiodev.mk
+        export NEW_CHECKSUM=`openssl dgst -sha256 pa_snapshot.tgz | awk '{print $2}'`
+        echo patching in $NEW_CHECKSUM
+        python -c "
+        import sys
+        import re
+
+        mk = 'win32/performous-mxe/mxe/src/portaudiodev.mk'
+
+        with open(mk) as f:
+          body = []
+          for line in f.readlines():
+          if '_CHECKSUM' in line:
+            line = re.sub(':= [0-9a-zA-Z]+', ':= ' + os.environ['NEW_CHECKSUM'], line)
+          body.append(line)
+
+        with open(mk, 'w') as f:
+          for line in body:
+            f.write(line)
+        "
         cat win32/performous-mxe/mxe/src/portaudiodev.mk
 
     - name: Install build dependencies
