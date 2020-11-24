@@ -86,6 +86,14 @@ jobs:
       env:
         PERFORMOUS_SOURCE: ${{runner.workspace}}/performous
 
+    - name: store build log
+      if: failure()
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-log
+        path: |
+          win32/performous-mxe/mxe/log
+
     - name: Show build results
       working-directory: ${{runner.workspace}}/performous
       shell: bash
