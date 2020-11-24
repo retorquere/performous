@@ -41,11 +41,11 @@ jobs:
 
         # patch in snapshot checksum JIT
         mkdir -p win32/performous-mxe/mxe/pkg
-        curl -L http://www.portaudio.com/archives/pa_snapshot.tgz -o win32/performous-mxe/mxe/pkg/pa_snapshot.tgz
-        tar tvf win32/performous-mxe/mxe/pkg/pa_snapshot.tgz
+        curl -LO http://www.portaudio.com/archives/pa_snapshot.tgz
         NEW_CHECKSUM_PREFIX='$(PKG)_CHECKSUM := '
-        NEW_CHECKSUM=`openssl dgst -sha256 win32/performous-mxe/mxe/pkg/pa_snapshot.tgz | awk '{print $2}'`
+        NEW_CHECKSUM=`openssl dgst -sha256 pa_snapshot.tgz | awk '{print $2}'`
         sed -i "s/.*_CHECKSUM.*/$NEW_CHECKSUM_PREFIX$CHECKSUM/" win32/performous-mxe/mxe/src/portaudiodev.mk
+        cat win32/performous-mxe/mxe/src/portaudiodev.mk
 
     - name: Install build dependencies
       run: sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python ruby sed unzip wget xz-utils scons
